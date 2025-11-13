@@ -1,17 +1,18 @@
 import * as CoursesDao from "./dao.js";
 import * as EnrollmentsDao from "../Enrollments/dao.js";
-export default function CourseRoutes(app, db) {
-  const dao = CoursesDao(db);
+
+export default function CourseRoutes(app) {
   const findAllCourses = (req, res) => {
-    const courses = dao.findAllCourses();
+    const courses = CoursesDao.findAllCourses();
     res.send(courses);
-  }
-   const deleteCourse = (req, res) => {
+  };
+
+  const deleteCourse = (req, res) => {
     const { courseId } = req.params;
-    const status = dao.deleteCourse(courseId);
+    const status = CoursesDao.deleteCourse(courseId);
     res.send(status);
-  }
-  app.delete("/api/courses/:courseId", deleteCourse);
+  };
+
   const findCoursesForEnrolledUser = (req, res) => {
     let { userId } = req.params;
     if (userId === "current") {
@@ -22,22 +23,25 @@ export default function CourseRoutes(app, db) {
       }
       userId = currentUser._id;
     }
-    const courses = dao.findCoursesForEnrolledUser(userId);
+    const courses = CoursesDao.findCoursesForEnrolledUser(userId);
     res.json(courses);
   };
-  const enrollmentsDao = EnrollmentsDao(db);
+
   const createCourse = (req, res) => {
     const currentUser = req.session["currentUser"];
-    const newCourse = dao.createCourse(req.body);
-    enrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
+    const newCourse = CoursesDao.createCourse(req.body);
+    EnrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
     res.json(newCourse);
   };
+
   const updateCourse = (req, res) => {
     const { courseId } = req.params;
     const courseUpdates = req.body;
-    const status = dao.updateCourse(courseId, courseUpdates);
+    const status = CoursesDao.updateCourse(courseId, courseUpdates);
     res.send(status);
-  }
+  };
+
+  app.delete("/api/courses/:courseId", deleteCourse);
   app.put("/api/courses/:courseId", updateCourse);
   app.post("/api/users/current/courses", createCourse);
   app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
