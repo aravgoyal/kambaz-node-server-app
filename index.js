@@ -8,7 +8,6 @@ import ModulesRoutes from "./Kambaz/Modules/routes.js";
 import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 import db from "./Kambaz/Database/index.js";
 import cors from "cors";
-import AssignmentRoutes from "./Kambaz/Assignments/routes.js";
 const app = express();
 app.use(
   cors({
