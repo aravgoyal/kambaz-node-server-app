@@ -1,32 +1,34 @@
-import * as dao from "./dao.js";
+import EnrollmentsDao from "./dao.js";
 
-export default function EnrollmentRoutes(app) {
-  const enrollUserInCourse = async (req, res) => {
-    const { userId, courseId } = req.params;
-    const enrollment = await dao.enrollUserInCourse(userId, courseId);
-    res.json(enrollment);
+export default function EnrollmentsRoutes(app, db) {
+  const dao = EnrollmentsDao(db);
+
+  const enrollInCourse = (req, res) => {
+    const { userId, courseId } = req.body;
+    dao.enrollUserInCourse(userId, courseId);
+    res.sendStatus(200);
   };
+  app.post("/api/enrollments", enrollInCourse);
 
-  const unenrollUserFromCourse = async (req, res) => {
+  const unenrollFromCourse = (req, res) => {
     const { userId, courseId } = req.params;
-    const status = await dao.unenrollUserFromCourse(userId, courseId);
-    res.json(status);
+    dao.unenrollUserFromCourse(userId, courseId);
+    res.sendStatus(200);
   };
+  app.delete("/api/enrollments/:userId/:courseId", unenrollFromCourse);
 
-  const findEnrollmentsForUser = async (req, res) => {
+  const getEnrollmentsForUser = async (req, res) => {
     const { userId } = req.params;
+    console.log("Getting enrollments for user:", userId);
     const enrollments = await dao.findEnrollmentsForUser(userId);
+    console.log("Found enrollments:", enrollments);
     res.json(enrollments);
   };
+  app.get("/api/enrollments/user/:userId", getEnrollmentsForUser);
 
-  const findEnrollmentsForCourse = async (req, res) => {
-    const { courseId } = req.params;
-    const enrollments = await dao.findEnrollmentsForCourse(courseId);
+  const getAllEnrollments = (req, res) => {
+    const { enrollments } = db;
     res.json(enrollments);
   };
-
-  app.post("/api/enrollments/:userId/:courseId", enrollUserInCourse);
-  app.delete("/api/enrollments/:userId/:courseId", unenrollUserFromCourse);
-  app.get("/api/enrollments/user/:userId", findEnrollmentsForUser);
-  app.get("/api/enrollments/course/:courseId", findEnrollmentsForCourse);
+  app.get("/api/enrollments", getAllEnrollments);
 }

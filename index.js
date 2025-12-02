@@ -33,6 +33,7 @@ if (process.env.SERVER_ENV !== "development") {
     domain: process.env.SERVER_URL,
   };
 }
+console.log("Session Options:", sessionOptions);
 app.use(session(sessionOptions));
 app.use(express.json());
 UserRoutes(app, db);
