@@ -1,32 +1,32 @@
-import * as dao from "./dao.js";
+import EnrollmentsDao from "./dao.js";
 
-export default function EnrollmentRoutes(app) {
-  const enrollUserInCourse = async (req, res) => {
-    const { userId, courseId } = req.params;
-    const enrollment = await dao.enrollUserInCourse(userId, courseId);
-    res.json(enrollment);
+export default function EnrollmentsRoutes(app, db) {
+  const dao = EnrollmentsDao(db);
+
+  const getAllEnrollments = (req, res) => {
+    res.json(db.enrollments);
   };
 
-  const unenrollUserFromCourse = async (req, res) => {
-    const { userId, courseId } = req.params;
-    const status = await dao.unenrollUserFromCourse(userId, courseId);
-    res.json(status);
-  };
-
-  const findEnrollmentsForUser = async (req, res) => {
+  const getEnrollmentsForUser = (req, res) => {
     const { userId } = req.params;
-    const enrollments = await dao.findEnrollmentsForUser(userId);
+    const enrollments = dao.findEnrollmentsForUser(userId);
     res.json(enrollments);
   };
 
-  const findEnrollmentsForCourse = async (req, res) => {
-    const { courseId } = req.params;
-    const enrollments = await dao.findEnrollmentsForCourse(courseId);
-    res.json(enrollments);
+  const enrollInCourse = (req, res) => {
+    const { userId, courseId } = req.body;
+    dao.enrollUserInCourse(userId, courseId);
+    res.sendStatus(200);
   };
 
-  app.post("/api/enrollments/:userId/:courseId", enrollUserInCourse);
-  app.delete("/api/enrollments/:userId/:courseId", unenrollUserFromCourse);
-  app.get("/api/enrollments/user/:userId", findEnrollmentsForUser);
-  app.get("/api/enrollments/course/:courseId", findEnrollmentsForCourse);
+  const unenrollFromCourse = (req, res) => {
+    const { userId, courseId } = req.params;
+    dao.unenrollUserFromCourse(userId, courseId);
+    res.sendStatus(200);
+  };
+
+  app.get("/api/enrollments", getAllEnrollments);
+  app.get("/api/enrollments/user/:userId", getEnrollmentsForUser);
+  app.post("/api/enrollments", enrollInCourse);
+  app.delete("/api/enrollments/:userId/:courseId", unenrollFromCourse);
 }

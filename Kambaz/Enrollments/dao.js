@@ -1,30 +1,26 @@
-import Database from "../Database/index.js";
+import { v4 as uuidv4 } from "uuid";
 
-export function enrollUserInCourse(userId, courseId) {
-  const { enrollments } = Database;
-  const newEnrollment = {
-    _id: Date.now().toString(),
-    user: userId,
-    course: courseId,
+export default function EnrollmentsDao(db) {
+  function enrollUserInCourse(userId, courseId) {
+    const { enrollments } = db;
+    enrollments.push({ _id: uuidv4(), user: userId, course: courseId });
+  }
+
+  function unenrollUserFromCourse(userId, courseId) {
+    const { enrollments } = db;
+    db.enrollments = enrollments.filter(
+      (e) => !(e.user === userId && e.course === courseId)
+    );
+  }
+
+  function findEnrollmentsForUser(userId) {
+    const { enrollments } = db;
+    return enrollments.filter((e) => e.user === userId);
+  }
+
+  return {
+    enrollUserInCourse,
+    unenrollUserFromCourse,
+    findEnrollmentsForUser,
   };
-  Database.enrollments = [...enrollments, newEnrollment];
-  return newEnrollment;
-}
-
-export function unenrollUserFromCourse(userId, courseId) {
-  const { enrollments } = Database;
-  Database.enrollments = enrollments.filter(
-    (enrollment) => !(enrollment.user === userId && enrollment.course === courseId)
-  );
-  return { status: "ok" };
-}
-
-export function findEnrollmentsForUser(userId) {
-  const { enrollments } = Database;
-  return enrollments.filter((enrollment) => enrollment.user === userId);
-}
-
-export function findEnrollmentsForCourse(courseId) {
-  const { enrollments } = Database;
-  return enrollments.filter((enrollment) => enrollment.course === courseId);
 }

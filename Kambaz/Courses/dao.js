@@ -1,36 +1,37 @@
 import { v4 as uuidv4 } from "uuid";
+
 export default function CoursesDao(db) {
-  function findAllCourses() {
-    return db.courses;
-  }
-  function findCoursesForEnrolledUser(userId) {
-  const { courses, enrollments } = db;
-  const enrolledCourses = courses.filter((course) =>
-    enrollments.some((enrollment) => enrollment.user === userId && enrollment.course === course._id));
-  return enrolledCourses;
-  
-}
+  const findAllCourses = () => db.courses;
 
-function createCourse(course) {
-  const newCourse = { ...course, _id: uuidv4() };
-  db.courses = [...db.courses, newCourse];
-  return newCourse;
-}
-
-function deleteCourse(courseId) {
+  const findCoursesForEnrolledUser = (userId) => {
     const { courses, enrollments } = db;
-    db.courses = courses.filter((course) => course._id !== courseId);
-    db.enrollments = enrollments.filter(
-      (enrollment) => enrollment.course !== courseId
-  );
-}
+    return courses.filter((course) =>
+      enrollments.some((e) => e.user === userId && e.course === course._id)
+    );
+  };
 
-function updateCourse(courseId, courseUpdates) {
-  const { courses } = db;
-  const course = courses.find((course) => course._id === courseId);
-  Object.assign(course, courseUpdates);
-  return course;
-}
+  const createCourse = (course) => {
+    const newCourse = { ...course, _id: uuidv4() };
+    db.courses = [...db.courses, newCourse];
+    return newCourse;
+  };
 
-  return { findAllCourses, findCoursesForEnrolledUser, createCourse, deleteCourse, updateCourse };
+  const updateCourse = (courseId, courseUpdates) => {
+    const course = db.courses.find((c) => c._id === courseId);
+    Object.assign(course, courseUpdates);
+    return course;
+  };
+
+  const deleteCourse = (courseId) => {
+    db.courses = db.courses.filter((c) => c._id !== courseId);
+    db.enrollments = db.enrollments.filter((e) => e.course !== courseId);
+  };
+
+  return {
+    findAllCourses,
+    findCoursesForEnrolledUser,
+    createCourse,
+    updateCourse,
+    deleteCourse,
+  };
 }
