@@ -1,27 +1,26 @@
 import { v4 as uuidv4 } from "uuid";
 import model from "./model.js";
 
-export function findAssignmentsForCourse(courseId) {
-  return model.find({ course: courseId });
-}
+export default function AssignmentsDao() {
+  const findAssignmentsForCourse = (courseId) => model.find({ course: courseId });
 
-export function findAssignmentById(assignmentId) {
-  return model.findOne({ _id: assignmentId });
-}
+  const findAssignmentById = (assignmentId) => model.findById(assignmentId);
 
-export function createAssignment(assignment) {
-  const newAssignment = { ...assignment, _id: uuidv4() };
-  return model.create(newAssignment);
-}
+  const createAssignment = (assignment) => {
+    return model.create({ ...assignment, _id: uuidv4() });
+  };
 
-export function updateAssignment(assignmentId, assignmentUpdates) {
-  return model.updateOne({ _id: assignmentId }, { $set: assignmentUpdates });
-}
+  const updateAssignment = (assignmentId, updates) => {
+    return model.updateOne({ _id: assignmentId }, { $set: updates });
+  };
 
-export function deleteAssignment(assignmentId) {
-  return model.deleteOne({ _id: assignmentId });
-}
+  const deleteAssignment = (assignmentId) => model.deleteOne({ _id: assignmentId });
 
-export function deleteAssignmentsForCourse(courseId) {
-  return model.deleteMany({ course: courseId });
+  return {
+    findAssignmentsForCourse,
+    findAssignmentById,
+    createAssignment,
+    updateAssignment,
+    deleteAssignment,
+  };
 }

@@ -4,12 +4,12 @@ const assignmentSchema = new mongoose.Schema(
   {
     _id: String,
     title: String,
+    course: String,
     description: String,
-    points: { type: Number, default: 100 },
-    dueDate: Date,
-    availableFromDate: Date,
-    availableUntilDate: Date,
-    course: { type: String, ref: "CourseModel" },
+    points: Number,
+    dueDate: String,
+    availableDate: String,
+    availableUntil: String,
   },
   { collection: "assignments" }
 );
