@@ -30,9 +30,9 @@ app.use(cors({
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 }));
-
-app.options("*", cors());
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
