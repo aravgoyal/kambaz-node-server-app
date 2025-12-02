@@ -1,31 +1,28 @@
+const assignment = {
+  id: 1,
+  title: "NodeJS Assignment",
+  description: "Create a NodeJS server with ExpressJS",
+  due: "2021-10-10",
+  completed: false,
+  score: 0,
+};
+
+const module = {
+  id: "M101",
+  name: "Introduction to NodeJS",
+  description: "Learn NodeJS basics",
+  course: "Web Development",
+};
+
 export default function WorkingWithObjects(app) {
-  // Assignment object
-  let assignment = {
-    id: 1,
-    title: "NodeJS Assignment",
-    description: "Create a NodeJS server with ExpressJS",
-    due: "2021-10-10",
-    completed: false,
-    score: 0,
-  };
-
-  // Module object
-  let module = {
-    id: "CS101",
-    name: "Introduction to Computer Science",
-    description: "Fundamentals of programming and computer science concepts",
-    course: "Computer Science"
-  };
-
-  // Assignment routes
   const getAssignment = (req, res) => {
     res.json(assignment);
   };
-  
+
   const getAssignmentTitle = (req, res) => {
     res.json(assignment.title);
   };
-  
+
   const setAssignmentTitle = (req, res) => {
     const { newTitle } = req.params;
     assignment.title = newTitle;
@@ -33,8 +30,8 @@ export default function WorkingWithObjects(app) {
   };
 
   const setAssignmentScore = (req, res) => {
-    const { newScore } = req.params;
-    assignment.score = parseInt(newScore);
+    const { score } = req.params;
+    assignment.score = parseInt(score);
     res.json(assignment);
   };
 
@@ -44,7 +41,6 @@ export default function WorkingWithObjects(app) {
     res.json(assignment);
   };
 
-  // Module routes
   const getModule = (req, res) => {
     res.json(module);
   };
@@ -54,27 +50,25 @@ export default function WorkingWithObjects(app) {
   };
 
   const setModuleName = (req, res) => {
-    const { newName } = req.params;
-    module.name = newName;
+    const { name } = req.params;
+    module.name = name;
     res.json(module);
   };
 
   const setModuleDescription = (req, res) => {
-    const { newDescription } = req.params;
-    module.description = newDescription;
+    const { description } = req.params;
+    module.description = description;
     res.json(module);
   };
 
-  // Assignment endpoints
   app.get("/lab5/assignment", getAssignment);
   app.get("/lab5/assignment/title", getAssignmentTitle);
   app.get("/lab5/assignment/title/:newTitle", setAssignmentTitle);
-  app.get("/lab5/assignment/score/:newScore", setAssignmentScore);
+  app.get("/lab5/assignment/score/:score", setAssignmentScore);
   app.get("/lab5/assignment/completed/:completed", setAssignmentCompleted);
 
-  // Module endpoints
   app.get("/lab5/module", getModule);
   app.get("/lab5/module/name", getModuleName);
-  app.get("/lab5/module/name/:newName", setModuleName);
-  app.get("/lab5/module/description/:newDescription", setModuleDescription);
+  app.get("/lab5/module/name/:name", setModuleName);
+  app.get("/lab5/module/description/:description", setModuleDescription);
 }

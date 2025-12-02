@@ -1,8 +1,8 @@
 let todos = [
-  { id: 1, title: "Task 1", description: "Description for Task 1", completed: false },
-  { id: 2, title: "Task 2", description: "Description for Task 2", completed: true },
-  { id: 3, title: "Task 3", description: "Description for Task 3", completed: false },
-  { id: 4, title: "Task 4", description: "Description for Task 4", completed: true },
+  { id: 1, title: "Task 1", completed: false, description: "Description 1" },
+  { id: 2, title: "Task 2", completed: true, description: "Description 2" },
+  { id: 3, title: "Task 3", completed: false, description: "Description 3" },
+  { id: 4, title: "Task 4", completed: true, description: "Description 4" },
 ];
 
 export default function WorkingWithArrays(app) {
@@ -17,12 +17,18 @@ export default function WorkingWithArrays(app) {
     res.json(todos);
   };
 
+  const getTodoById = (req, res) => {
+    const { id } = req.params;
+    const todo = todos.find((t) => t.id === parseInt(id));
+    res.json(todo);
+  };
+
   const createNewTodo = (req, res) => {
     const newTodo = {
       id: new Date().getTime(),
       title: "New Task",
-      description: "New Task Description",
       completed: false,
+      description: "New Description",
     };
     todos.push(newTodo);
     res.json(todos);
@@ -34,13 +40,6 @@ export default function WorkingWithArrays(app) {
     res.json(newTodo);
   };
 
-
-  const getTodoById = (req, res) => {
-    const { id } = req.params;
-    const todo = todos.find((t) => t.id === parseInt(id));
-    res.json(todo);
-  };
-
   const removeTodo = (req, res) => {
     const { id } = req.params;
     const todoIndex = todos.findIndex((t) => t.id === parseInt(id));
@@ -48,31 +47,6 @@ export default function WorkingWithArrays(app) {
     res.json(todos);
   };
 
-  const updateTodoTitle = (req, res) => {
-    const { id, title } = req.params;
-    const todo = todos.find((t) => t.id === parseInt(id));
-    todo.title = title;
-    res.json(todos);
-  };
-
-  // Add these new handlers
-  const updateTodoDescription = (req, res) => {
-    const { id, description } = req.params;
-    const todo = todos.find((t) => t.id === parseInt(id));
-    if (todo) {
-      todo.description = description;
-    }
-    res.json(todos);
-  };
-
-  const updateTodoCompleted = (req, res) => {
-    const { id, completed } = req.params;
-    const todo = todos.find((t) => t.id === parseInt(id));
-    if (todo) {
-      todo.completed = completed === "true";
-    }
-    res.json(todos);
-  };
   const deleteTodo = (req, res) => {
     const { id } = req.params;
     const todoIndex = todos.findIndex((t) => t.id === parseInt(id));
@@ -83,6 +57,28 @@ export default function WorkingWithArrays(app) {
     todos.splice(todoIndex, 1);
     res.sendStatus(200);
   };
+
+  const updateTodoTitle = (req, res) => {
+    const { id, title } = req.params;
+    const todo = todos.find((t) => t.id === parseInt(id));
+    todo.title = title;
+    res.json(todos);
+  };
+
+  const updateTodoCompleted = (req, res) => {
+    const { id, completed } = req.params;
+    const todo = todos.find((t) => t.id === parseInt(id));
+    todo.completed = completed === "true";
+    res.json(todos);
+  };
+
+  const updateTodoDescription = (req, res) => {
+    const { id, description } = req.params;
+    const todo = todos.find((t) => t.id === parseInt(id));
+    todo.description = description;
+    res.json(todos);
+  };
+
   const updateTodo = (req, res) => {
     const { id } = req.params;
     const todoIndex = todos.findIndex((t) => t.id === parseInt(id));
@@ -98,15 +94,16 @@ export default function WorkingWithArrays(app) {
     });
     res.sendStatus(200);
   };
-  app.put("/lab5/todos/:id", updateTodo);
-  app.delete("/lab5/todos/:id", deleteTodo);
 
   app.get("/lab5/todos", getTodos);
-  app.post("/lab5/todos", postNewTodo);
   app.get("/lab5/todos/create", createNewTodo);
   app.get("/lab5/todos/:id", getTodoById);
   app.get("/lab5/todos/:id/delete", removeTodo);
   app.get("/lab5/todos/:id/title/:title", updateTodoTitle);
-  app.get("/lab5/todos/:id/description/:description", updateTodoDescription);
   app.get("/lab5/todos/:id/completed/:completed", updateTodoCompleted);
+  app.get("/lab5/todos/:id/description/:description", updateTodoDescription);
+
+  app.post("/lab5/todos", postNewTodo);
+  app.delete("/lab5/todos/:id", deleteTodo);
+  app.put("/lab5/todos/:id", updateTodo);
 }
