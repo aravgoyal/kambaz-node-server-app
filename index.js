@@ -16,12 +16,23 @@ const app = express();
 
 app.use(cors({
   credentials: true,
-  origin: process.env.NODE_ENV === "production"
-    ? ["https://kambaz-styled-js.vercel.app", "https://kambaz-styled-9msk8thet-lok-ye-s-projects.vercel.app/"]
-    : "http://localhost:3000",
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://kambaz-styled-js.vercel.app",
+      "https://kambaz-styled-9msk8thet-lok-ye-s-projects.vercel.app",
+    ];
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
 }));
+
+app.options("*", cors());
 
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
@@ -41,10 +52,6 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(session(sessionOptions));
 app.use(express.json());
-
-console.log("Database URL:", process.env.DB_URL);
-console.log("Environment:", process.env.NODE_ENV);
-console.log("Session Secret:", process.env.SESSION_SECRET ? "Defined" : "Not Defined");
 
 UserRoutes(app, db);
 CourseRoutes(app, db);
